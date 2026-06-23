@@ -1,6 +1,20 @@
-output "private_endpoints" {
-  description = <<DESCRIPTION
-  A map of the private endpoints created.
-  DESCRIPTION
-  value       = var.private_endpoints_manage_dns_zone_group ? azurerm_private_endpoint.this_managed_dns_zone_groups : azurerm_private_endpoint.this_unmanaged_dns_zone_groups
+output "cosmos_db_resource_id" {
+  description = "The resource ID of the CosmosDB account."
+  value       = azurerm_cosmosdb_account.cosmos.id
+}
+
+output "redis_cache_resource_id" {
+  description = "The resource ID of the Redis cache."
+  value       = module.redis.resource_id
+}
+
+output "resource_group_name" {
+  description = "The resource group the PaaS ASE with CosmosDB Tier 4 was deployed into."
+  value       = var.resource_group_name
+}
+
+// Outputs
+output "vnet_resource_id" {
+  description = "The resource ID of the virtual network."
+  value       = azurerm_virtual_network.vnet.id
 }

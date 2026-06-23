@@ -23,13 +23,26 @@ The following requirements are needed by this module:
 
 The following resources are used by this module:
 
-- [azurerm_management_lock.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_lock) (resource)
+- [azurerm_app_service_environment_v3.ase](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/app_service_environment_v3) (resource)
+- [azurerm_cosmosdb_account.cosmos](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_account) (resource)
+- [azurerm_cosmosdb_sql_container.container](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_sql_container) (resource)
+- [azurerm_cosmosdb_sql_database.db](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_sql_database) (resource)
+- [azurerm_private_dns_zone.appservice](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone) (resource)
+- [azurerm_private_dns_zone.cosmosdb](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone) (resource)
+- [azurerm_private_dns_zone.redis](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone) (resource)
+- [azurerm_private_dns_zone_virtual_network_link.appservice_vnet_link](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link) (resource)
+- [azurerm_private_dns_zone_virtual_network_link.cosmosdb_vnet_link](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link) (resource)
+- [azurerm_private_dns_zone_virtual_network_link.redis_vnet_link](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link) (resource)
 - [azurerm_private_endpoint.this_managed_dns_zone_groups](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) (resource)
 - [azurerm_private_endpoint.this_unmanaged_dns_zone_groups](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) (resource)
 - [azurerm_private_endpoint_application_security_group_association.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint_application_security_group_association) (resource)
-- [azurerm_resource_group.TODO](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) (resource)
-- [azurerm_role_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
+- [azurerm_subnet.default](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) (resource)
+- [azurerm_subnet.private_endpoint_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) (resource)
+- [azurerm_subnet_network_security_group_association.default_assoc](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet_network_security_group_association) (resource)
+- [azurerm_subnet_network_security_group_association.private_endpoint_assoc](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet_network_security_group_association) (resource)
+- [azurerm_virtual_network.vnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) (resource)
 - [modtm_telemetry.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/resources/telemetry) (resource)
+- [random_id.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) (resource)
 - [random_uuid.telemetry](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/uuid) (resource)
 - [azapi_client_config.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
 - [modtm_module_source.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/data-sources/module_source) (data source)
@@ -39,21 +52,9 @@ The following resources are used by this module:
 
 The following input variables are required:
 
-### <a name="input_location"></a> [location](#input\_location)
-
-Description: Azure region where the resource should be deployed.
-
-Type: `string`
-
 ### <a name="input_name"></a> [name](#input\_name)
 
-Description: The name of the this resource.
-
-Type: `string`
-
-### <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name)
-
-Description: The resource group where the resources will be deployed.
+Description: Required. The name of the deployment.
 
 Type: `string`
 
@@ -61,63 +62,117 @@ Type: `string`
 
 The following input variables are optional (have default values):
 
-### <a name="input_customer_managed_key"></a> [customer\_managed\_key](#input\_customer\_managed\_key)
+### <a name="input_ase_custom_dns_suffix"></a> [ase\_custom\_dns\_suffix](#input\_ase\_custom\_dns\_suffix)
 
-Description: A map describing customer-managed keys to associate with the resource. This includes the following properties:
-- `key_vault_resource_id` - The resource ID of the Key Vault where the key is stored.
-- `key_name` - The name of the key.
-- `key_version` - (Optional) The version of the key. If not specified, the latest version is used.
-- `user_assigned_identity` - (Optional) An object representing a user-assigned identity with the following properties:
-  - `resource_id` - The resource ID of the user-assigned identity.
+Description: Optional custom DNS suffix for the ASE (e.g. myname.appserviceenvironment.net).
 
-Type:
-
-```hcl
-object({
-    key_vault_resource_id = string
-    key_name              = string
-    key_version           = optional(string, null)
-    user_assigned_identity = optional(object({
-      resource_id = string
-    }), null)
-  })
-```
+Type: `string`
 
 Default: `null`
 
-### <a name="input_diagnostic_settings"></a> [diagnostic\_settings](#input\_diagnostic\_settings)
+### <a name="input_ase_front_end_scale_factor"></a> [ase\_front\_end\_scale\_factor](#input\_ase\_front\_end\_scale\_factor)
 
-Description: A map of diagnostic settings to create on the Key Vault. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
+Description: Front end scale factor for the ASE (maps to ASE network configuration frontEndScaleFactor where supported).
 
-- `name` - (Optional) The name of the diagnostic setting. One will be generated if not set, however this will not be unique if you want to create multiple diagnostic setting resources.
-- `log_categories` - (Optional) A set of log categories to send to the log analytics workspace. Defaults to `[]`.
-- `log_groups` - (Optional) A set of log groups to send to the log analytics workspace. Defaults to `["allLogs"]`.
-- `metric_categories` - (Optional) A set of metric categories to send to the log analytics workspace. Defaults to `["AllMetrics"]`.
-- `log_analytics_destination_type` - (Optional) The destination type for the diagnostic setting. Possible values are `Dedicated` and `AzureDiagnostics`. Defaults to `Dedicated`.
-- `workspace_resource_id` - (Optional) The resource ID of the log analytics workspace to send logs and metrics to.
-- `storage_account_resource_id` - (Optional) The resource ID of the storage account to send logs and metrics to.
-- `event_hub_authorization_rule_resource_id` - (Optional) The resource ID of the event hub authorization rule to send logs and metrics to.
-- `event_hub_name` - (Optional) The name of the event hub. If none is specified, the default event hub will be selected.
-- `marketplace_partner_resource_id` - (Optional) The full ARM resource ID of the Marketplace resource to which you would like to send Diagnostic LogsLogs.
+Type: `number`
+
+Default: `15`
+
+### <a name="input_ase_zone_redundant"></a> [ase\_zone\_redundant](#input\_ase\_zone\_redundant)
+
+Description: Whether ASE should be zone redundant (where supported).
+
+Type: `bool`
+
+Default: `false`
+
+### <a name="input_asp_os_type"></a> [asp\_os\_type](#input\_asp\_os\_type)
+
+Description: OS type for App Service Plan module.
+
+Type: `string`
+
+Default: `"Linux"`
+
+### <a name="input_asp_sku_name"></a> [asp\_sku\_name](#input\_asp\_sku\_name)
+
+Description: SKU name for App Service Plan
+
+Type: `string`
+
+Default: `"S1"`
+
+### <a name="input_asp_worker_count"></a> [asp\_worker\_count](#input\_asp\_worker\_count)
+
+Description: Worker count for the App Service Plan where applicable.
+
+Type: `number`
+
+Default: `1`
+
+### <a name="input_cosmos_capabilities"></a> [cosmos\_capabilities](#input\_cosmos\_capabilities)
+
+Description: List of CosmosDB capabilities to enable (e.g. ["EnableServerless"]).
+
+Type: `list(string)`
+
+Default: `[]`
+
+### <a name="input_cosmos_consistency_level"></a> [cosmos\_consistency\_level](#input\_cosmos\_consistency\_level)
+
+Description: Consistency level for the CosmosDB account (e.g., Session, BoundedStaleness).
+
+Type: `string`
+
+Default: `"Session"`
+
+### <a name="input_cosmos_container_throughput"></a> [cosmos\_container\_throughput](#input\_cosmos\_container\_throughput)
+
+Description: Throughput for the default Cosmos DB SQL container.
+
+Type: `number`
+
+Default: `400`
+
+### <a name="input_cosmos_geo_locations"></a> [cosmos\_geo\_locations](#input\_cosmos\_geo\_locations)
+
+Description: Geo locations for CosmosDB account. A list of objects { location, failover\_priority, zone\_redundant }.
 
 Type:
 
 ```hcl
-map(object({
-    name                                     = optional(string, null)
-    log_categories                           = optional(set(string), [])
-    log_groups                               = optional(set(string), ["allLogs"])
-    metric_categories                        = optional(set(string), ["AllMetrics"])
-    log_analytics_destination_type           = optional(string, "Dedicated")
-    workspace_resource_id                    = optional(string, null)
-    storage_account_resource_id              = optional(string, null)
-    event_hub_authorization_rule_resource_id = optional(string, null)
-    event_hub_name                           = optional(string, null)
-    marketplace_partner_resource_id          = optional(string, null)
+list(object({
+    location          = string
+    failover_priority = number
+    zone_redundant    = optional(bool, false)
   }))
 ```
 
-Default: `{}`
+Default: `[]`
+
+### <a name="input_cosmos_max_interval_in_seconds"></a> [cosmos\_max\_interval\_in\_seconds](#input\_cosmos\_max\_interval\_in\_seconds)
+
+Description: When using BoundedStaleness consistency this sets the maximum interval in seconds.
+
+Type: `number`
+
+Default: `null`
+
+### <a name="input_cosmos_max_staleness_prefix"></a> [cosmos\_max\_staleness\_prefix](#input\_cosmos\_max\_staleness\_prefix)
+
+Description: When using BoundedStaleness consistency this sets the maximum staleness prefix.
+
+Type: `number`
+
+Default: `null`
+
+### <a name="input_default_subnet_address_prefix"></a> [default\_subnet\_address\_prefix](#input\_default\_subnet\_address\_prefix)
+
+Description: Optional. Default subnet address prefix.
+
+Type: `string`
+
+Default: `"192.168.250.0/24"`
 
 ### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
 
@@ -129,157 +184,165 @@ Type: `bool`
 
 Default: `true`
 
-### <a name="input_lock"></a> [lock](#input\_lock)
+### <a name="input_location"></a> [location](#input\_location)
 
-Description: Controls the Resource Lock configuration for this resource. The following properties can be specified:
+Description: Optional. Location for all resources. If null, consumers should pass a value.
 
-- `kind` - (Required) The type of lock. Possible values are `\"CanNotDelete\"` and `\"ReadOnly\"`.
-- `name` - (Optional) The name of the lock. If not specified, a name will be generated based on the `kind` value. Changing this forces the creation of a new resource.
-
-Type:
-
-```hcl
-object({
-    kind = string
-    name = optional(string, null)
-  })
-```
+Type: `string`
 
 Default: `null`
 
-### <a name="input_managed_identities"></a> [managed\_identities](#input\_managed\_identities)
+### <a name="input_private_endpoint_subnet_address_prefix"></a> [private\_endpoint\_subnet\_address\_prefix](#input\_private\_endpoint\_subnet\_address\_prefix)
 
-Description: Controls the Managed Identity configuration on this resource. The following properties can be specified:
+Description: Optional. PrivateEndpoint subnet address prefix.
 
-- `system_assigned` - (Optional) Specifies if the System Assigned Managed Identity should be enabled.
-- `user_assigned_resource_ids` - (Optional) Specifies a list of User Assigned Managed Identity resource IDs to be assigned to this resource.
+Type: `string`
 
-Type:
-
-```hcl
-object({
-    system_assigned            = optional(bool, false)
-    user_assigned_resource_ids = optional(set(string), [])
-  })
-```
-
-Default: `{}`
+Default: `"192.168.251.0/24"`
 
 ### <a name="input_private_endpoints"></a> [private\_endpoints](#input\_private\_endpoints)
 
-Description: A map of private endpoints to create on this resource. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
+Description: Optional map of additional private endpoints. The module will merge these with the endpoints it creates for CosmosDB and Redis.
 
-- `name` - (Optional) The name of the private endpoint. One will be generated if not set.
-- `role_assignments` - (Optional) A map of role assignments to create on the private endpoint. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time. See `var.role_assignments` for more information.
-- `lock` - (Optional) The lock level to apply to the private endpoint. Default is `None`. Possible values are `None`, `CanNotDelete`, and `ReadOnly`.
-- `tags` - (Optional) A mapping of tags to assign to the private endpoint.
-- `subnet_resource_id` - The resource ID of the subnet to deploy the private endpoint in.
-- `private_dns_zone_group_name` - (Optional) The name of the private DNS zone group. One will be generated if not set.
-- `private_dns_zone_resource_ids` - (Optional) A set of resource IDs of private DNS zones to associate with the private endpoint. If not set, no zone groups will be created and the private endpoint will not be associated with any private DNS zones. DNS records must be managed external to this module.
-- `application_security_group_resource_ids` - (Optional) A map of resource IDs of application security groups to associate with the private endpoint. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
-- `private_service_connection_name` - (Optional) The name of the private service connection. One will be generated if not set.
-- `network_interface_name` - (Optional) The name of the network interface. One will be generated if not set.
-- `location` - (Optional) The Azure location where the resources will be deployed. Defaults to the location of the resource group.
-- `resource_group_name` - (Optional) The resource group where the resources will be deployed. Defaults to the resource group of this resource.
-- `ip_configurations` - (Optional) A map of IP configurations to create on the private endpoint. If not specified the platform will create one. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
-  - `name` - The name of the IP configuration.
-  - `private_ip_address` - The private IP address of the IP configuration.
-
-Type:
-
-```hcl
-map(object({
-    name = optional(string, null)
-    role_assignments = optional(map(object({
-      role_definition_id_or_name             = string
-      principal_id                           = string
-      description                            = optional(string, null)
-      skip_service_principal_aad_check       = optional(bool, false)
-      condition                              = optional(string, null)
-      condition_version                      = optional(string, null)
-      delegated_managed_identity_resource_id = optional(string, null)
-    })), {})
-    lock = optional(object({
-      kind = string
-      name = optional(string, null)
-    }), null)
-    tags                                    = optional(map(string), null)
-    subnet_resource_id                      = string
-    private_dns_zone_group_name             = optional(string, "default")
-    private_dns_zone_resource_ids           = optional(set(string), [])
-    application_security_group_associations = optional(map(string), {})
-    private_service_connection_name         = optional(string, null)
-    network_interface_name                  = optional(string, null)
-    location                                = optional(string, null)
-    resource_group_name                     = optional(string, null)
-    ip_configurations = optional(map(object({
-      name               = string
-      private_ip_address = string
-    })), {})
-  }))
-```
+Type: `map(any)`
 
 Default: `{}`
 
 ### <a name="input_private_endpoints_manage_dns_zone_group"></a> [private\_endpoints\_manage\_dns\_zone\_group](#input\_private\_endpoints\_manage\_dns\_zone\_group)
 
-Description: Whether to manage private DNS zone groups with this module. If set to false, you must manage private DNS zone groups externally, e.g. using Azure Policy.
+Description: When true the module will create the private\_dns\_zone\_group block in the private endpoint.
 
 Type: `bool`
 
 Default: `true`
 
-### <a name="input_role_assignments"></a> [role\_assignments](#input\_role\_assignments)
+### <a name="input_redis_capacity"></a> [redis\_capacity](#input\_redis\_capacity)
 
-Description: A map of role assignments to create on this resource. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
+Description: Redis capacity (0..6 for Basic/Standard).
 
-- `role_definition_id_or_name` - The ID or name of the role definition to assign to the principal.
-- `principal_id` - The ID of the principal to assign the role to.
-- `description` - The description of the role assignment.
-- `skip_service_principal_aad_check` - If set to true, skips the Azure Active Directory check for the service principal in the tenant. Defaults to false.
-- `condition` - The condition which will be used to scope the role assignment.
-- `condition_version` - The version of the condition syntax. Valid values are '2.0'.
-- `delegated_managed_identity_resource_id` - The delegated Azure Resource Id which contains a Managed Identity. Changing this forces a new resource to be created.
-- `principal_type` - The type of the principal\_id. Possible values are `User`, `Group` and `ServicePrincipal`. Changing this forces a new resource to be created. It is necessary to explicitly set this attribute when creating role assignments if the principal creating the assignment is constrained by ABAC rules that filters on the PrincipalType attribute.
+Type: `number`
 
-> Note: only set `skip_service_principal_aad_check` to true if you are assigning a role to a service principal.
+Default: `0`
 
-Type:
+### <a name="input_redis_enable_non_ssl_port"></a> [redis\_enable\_non\_ssl\_port](#input\_redis\_enable\_non\_ssl\_port)
 
-```hcl
-map(object({
-    role_definition_id_or_name             = string
-    principal_id                           = string
-    description                            = optional(string, null)
-    skip_service_principal_aad_check       = optional(bool, false)
-    condition                              = optional(string, null)
-    condition_version                      = optional(string, null)
-    delegated_managed_identity_resource_id = optional(string, null)
-    principal_type                         = optional(string, null)
-  }))
-```
+Description: Expose whether to enable non-SSL port for Redis.
+
+Type: `bool`
+
+Default: `false`
+
+### <a name="input_redis_minimum_tls_version"></a> [redis\_minimum\_tls\_version](#input\_redis\_minimum\_tls\_version)
+
+Description: Minimum TLS version for Redis.
+
+Type: `string`
+
+Default: `"1.2"`
+
+### <a name="input_redis_private_endpoints"></a> [redis\_private\_endpoints](#input\_redis\_private\_endpoints)
+
+Description: A map of private endpoints for Redis to pass into the Redis AVM module (mergeable with module-generated endpoints).
+
+Type: `map(any)`
 
 Default: `{}`
 
+### <a name="input_redis_sku_name"></a> [redis\_sku\_name](#input\_redis\_sku\_name)
+
+Description: Redis SKU name
+
+Type: `string`
+
+Default: `"Basic"`
+
+### <a name="input_redis_version"></a> [redis\_version](#input\_redis\_version)
+
+Description: Redis version (string).
+
+Type: `string`
+
+Default: `"6"`
+
+### <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name)
+
+Description: Optional. Resource group name where resources are deployed.
+
+Type: `string`
+
+Default: `null`
+
+### <a name="input_suffix"></a> [suffix](#input\_suffix)
+
+Description: Optional. Suffix for all resources.
+
+Type: `string`
+
+Default: `null`
+
 ### <a name="input_tags"></a> [tags](#input\_tags)
 
-Description: (Optional) Tags of the resource.
+Description: Optional. Tags to apply to resources.
 
 Type: `map(string)`
 
-Default: `null`
+Default: `{}`
+
+### <a name="input_vnet_address_prefix"></a> [vnet\_address\_prefix](#input\_vnet\_address\_prefix)
+
+Description: Optional. Virtual Network address space.
+
+Type: `string`
+
+Default: `"192.168.250.0/23"`
 
 ## Outputs
 
 The following outputs are exported:
 
-### <a name="output_private_endpoints"></a> [private\_endpoints](#output\_private\_endpoints)
+### <a name="output_cosmos_db_resource_id"></a> [cosmos\_db\_resource\_id](#output\_cosmos\_db\_resource\_id)
 
-Description:   A map of the private endpoints created.
+Description: The resource ID of the CosmosDB account.
+
+### <a name="output_redis_cache_resource_id"></a> [redis\_cache\_resource\_id](#output\_redis\_cache\_resource\_id)
+
+Description: The resource ID of the Redis cache.
+
+### <a name="output_resource_group_name"></a> [resource\_group\_name](#output\_resource\_group\_name)
+
+Description: The resource group the PaaS ASE with CosmosDB Tier 4 was deployed into.
+
+### <a name="output_vnet_resource_id"></a> [vnet\_resource\_id](#output\_vnet\_resource\_id)
+
+Description: The resource ID of the virtual network.
 
 ## Modules
 
-No modules.
+The following Modules are called:
+
+### <a name="module_asp"></a> [asp](#module\_asp)
+
+Source: Azure/avm-res-web-serverfarm/azurerm
+
+Version:
+
+### <a name="module_default_nsg"></a> [default\_nsg](#module\_default\_nsg)
+
+Source: Azure/avm-res-network-networksecuritygroup/azurerm
+
+Version: 0.5.0
+
+### <a name="module_private_endpoint_nsg"></a> [private\_endpoint\_nsg](#module\_private\_endpoint\_nsg)
+
+Source: Azure/avm-res-network-networksecuritygroup/azurerm
+
+Version: 0.5.0
+
+### <a name="module_redis"></a> [redis](#module\_redis)
+
+Source: Azure/avm-res-cache-redis/azurerm
+
+Version:
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection
