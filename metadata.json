@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/Azure/azure-verified-modules-tools/main/src/Avm.Authoring/Resources/Schemas/v1/avm-module-metadata.schema.json",
-  "moduleDisplayName": "Corporate Line of Business application architecture using PaaS components Application Service Environment and CosmosDB in the context of Enterprise Scale Landing Zones",
-  "moduleDescription": "Intended AVM Terraform pattern module for Corporate Line of Business application architecture using PaaS components Application Service Environment and CosmosDB in the context of Enterprise Scale Landing Zones.",
+  "moduleDisplayName": "PaaS ASE CosmosDB Tier 4",
+  "moduleDescription": "AVM Terraform pattern module for PaaS ASE CosmosDB Tier 4.",
   "canonicalType": "app-paas-ase-cosmosdb-tier-four",
   "owners": [
     "mikestiers"
