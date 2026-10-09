@@ -1,0 +1,38 @@
+# Example Terraform variables for testing the AVM Pattern Module
+# Copy this file to terraform.tfvars and modify as needed
+
+# Basic test configuration
+test_name        = "avmtest"
+location         = "East US"
+enable_telemetry = false
+
+# Test scenario selection
+# Options: "basic", "premium", "multi-region"
+test_scenario = "basic"
+
+# Override default configurations for testing
+cosmos_consistency_level_override = "Session"
+redis_sku_override                = "Basic"
+asp_sku_override                  = "I1v2"
+
+# Network configuration
+vnet_address_space_override = "10.0.0.0/16"
+
+# Additional tags for test resources
+tags_override = {
+  project     = "avm-testing"
+  team        = "platform-engineering"
+  cost_center = "engineering"
+}
+
+# Example configurations for different scenarios:
+
+# Premium test scenario:
+# test_scenario = "premium"
+# redis_sku_override = "Standard"
+# asp_sku_override = "I2v2"
+
+# Multi-region test scenario:
+# test_scenario = "multi-region"
+# location = "East US"
+# cosmos_consistency_level_override = "BoundedStaleness"
