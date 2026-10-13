@@ -1,3 +1,5 @@
-# terraform-azurerm-avm-template
+# PaaS ASE CosmosDB Tier 4
 
-This is a template repo for Terraform Azure Verified Modules.
+**Proposed module: not implemented.**
+
+This repository contains the generic virtual-network starter from Avm.Authoring 0.23.0. It does not implement the ASE/CosmosDB pattern.
